@@ -61,6 +61,8 @@ module QBWC
 
     def qwc
       # Optional tag
+      puts "====================="
+      puts params
       scheduler_block = ''
       if !QBWC.minutes_to_run.nil?
         scheduler_block = <<SB
@@ -77,7 +79,8 @@ SB
    <AppURL>#{qbwc_action_url(:only_path => false)}</AppURL>
    <AppDescription>Quickbooks integration</AppDescription>
    <AppSupport>#{QBWC.support_site_url || root_url(:protocol => 'https://')}</AppSupport>
-   <UserName>#{QBWC.username}</UserName>
+   <UserName>#{params[:strUserName] || QBWC.username}</UserName>
+   <Password>#{params[:strPassword] || QBWC.password}</Password>
    <OwnerID>#{QBWC.owner_id}</OwnerID>
    <FileID>{#{file_id}}</FileID>
    <QBType>QBFS</QBType>
@@ -103,13 +106,24 @@ QWC
     def authenticate
       username = params[:strUserName]
       password = params[:strPassword]
-      if !QBWC.authenticator.nil?
-        company_file_path = QBWC.authenticator.call(username, password)
-      elsif username == QBWC.username && password == QBWC.password
-        company_file_path = QBWC.company_file_path
-      else
-        company_file_path = nil
-      end
+      QBWC.authenticator = Proc.new { |username, password|
+        file_path = nil 
+        QbDesktopAccount.all.each do |qb|
+          
+          if username == qb.username && password == qb.password
+            file_path = qb.company_file_path
+          end
+        end
+        file_path
+      } 
+      # if !QBWC.authenticator.nil?
+      #   company_file_path = QBWC.authenticator.call(username, password)
+      # elsif username == QBWC.username && password == QBWC.password
+      #   company_file_path = QBWC.company_file_path
+      # else
+      #   company_file_path = nil
+      # end
+      company_file_path = QBWC.authenticator.call(username, password)
 
       ticket = nil
       if company_file_path.nil?
@@ -166,7 +180,7 @@ QWC
     end
 
     def file_id
-      '90A44FB5-33D9-4815-AC85-BC87A7E7D1EB'
+      "90A44FB5-33D9-4815-#{SecureRandom.hex(2).upcase}-#{SecureRandom.hex(6).upcase}"
     end
 
     protected
