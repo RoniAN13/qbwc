@@ -78,7 +78,7 @@ SB
    <AppID></AppID>
    <AppURL>#{qbwc_action_url(:only_path => false)}</AppURL>
    <AppDescription>Quickbooks integration</AppDescription>
-   <AppSupport>#{QBWC.support_site_url || root_url(:protocol => 'https://')}</AppSupport>
+   <AppSupport>#{root_url(:protocol => 'https://')}</AppSupport>
    <UserName>#{params[:strUserName] || QBWC.username}</UserName>
    <Password>#{params[:strPassword] || QBWC.password}</Password>
    <OwnerID>#{QBWC.owner_id}</OwnerID>
