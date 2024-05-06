@@ -76,7 +76,7 @@ SB
 <QBWCXML>
    <AppName>#{app_name}</AppName>
    <AppID></AppID>
-   <AppURL>#{qbwc_action_url(:only_path => false)}</AppURL>
+   <AppURL>#{qbwc_action_url(:only_path => false,:protocol => 'https://')}</AppURL>
    <AppDescription>Quickbooks integration</AppDescription>
    <AppSupport>#{root_url(:protocol => 'https://')}</AppSupport>
    <UserName>#{params[:strUserName] || QBWC.username}</UserName>
